@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Your Tasks</title>
+    <!-- bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <!-- css  -->
+    <link rel="stylesheet" href="all_tasks.css">
+
+    <style>
+
+    </style>
+</head>
+
+<body class="container mt-5">
+
+    <div class="container-box">
+
+        <h3 class="text-center mb-4">✨ Your Tasks</h3>
+
+        <ul id="taskList" class="list-unstyled"></ul>
+
+        <button class="btn btn-light w-100 mt-3" onclick="goBack()">⬅ Back</button>
+
+    </div>
+
+    <script>
+
+        let tasks = JSON.parse(localStorage.getItem("tasks")) || []
+
+        let list = document.getElementById("taskList")
+
+        tasks.forEach((t, index) => {
+
+            let li = document.createElement("li")
+            li.className = "task-item"
+
+            li.innerHTML = `
+<div>
+<input type="checkbox" onclick="completeTask(this)">
+<span>${t.date} - ${t.task}</span>
+</div>
+
+<button class="btn btn-sm btn-danger" onclick="deleteTask(${index})">
+🗑
+</button>
+`
+
+            list.appendChild(li)
+
+        })
+
+        function deleteTask(index) {
+            tasks.splice(index, 1)
+            localStorage.setItem("tasks", JSON.stringify(tasks))
+
+            document.querySelectorAll(".task-item")[index].style.transform = "scale(0)"
+            setTimeout(() => location.reload(), 300)
+        }
+
+        function completeTask(box) {
+            box.nextElementSibling.classList.toggle("completed")
+        }
+
+        function goBack() {
+            window.location = "index.html"
+        }
+
+    </script>
+
+</body>
+
+</html>
