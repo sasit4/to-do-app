@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Task Page</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="task.css">
+
+    <!-- bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <div class="container mt-4">
+
+        <!-- TOP BAR -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+
+            <h5 id="showDate"></h5>
+
+            <button class="btn btn-danger btn-sm" onclick="closePage()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+
+        </div>
+
+        <h5 class="task">Today Task</h5>
+
+        <p id="taskCount"></p>
+
+        <!-- ADD TASK -->
+        <div class="input-group mb-3">
+
+            <input type="text" id="taskInput" class="form-control" placeholder="Enter task">
+
+            <button class="btn btn-success" onclick="addTask()">
+                Add
+            </button>
+
+        </div>
+
+        <!-- TASK LIST -->
+        <ul id="taskList" class="list-group mb-3">
+        </ul>
+
+        <!-- SUBMIT -->
+        <button class="btn btn-primary w-100" onclick="submitTask()">
+            Submit
+        </button>
+
+    </div>
+
+    <script>
+
+        let tasks =
+            JSON.parse(
+                localStorage.getItem("tasks")
+            ) || []
+
+        let date =
+            localStorage.getItem("date")
+
+        let cat =
+            localStorage.getItem("category")
+
+        document.getElementById("showDate")
+            .innerHTML =
+            date + " - " + cat
+
+        /* LOAD TASKS */
+
+        function loadTasks() {
+
+            document.getElementById("taskList")
+                .innerHTML = ""
+
+            tasks.forEach(function (t, index) {
+
+                let li =
+                    document.createElement("li")
+
+                /* FLEX FIX */
+
+                li.className =
+                    "list-group-item d-flex justify-content-between align-items-center"
+
+                li.innerHTML =
+
+                    `<span>${t.task}</span>
+
+                    <div>
+
+                        <button class="btn btn-sm btn-warning me-2"
+                                onclick="editTask(${index})">
+
+                            <i class="bi bi-pencil"></i>
+
+                        </button>
+
+                        <button class="btn btn-sm btn-danger"
+                                onclick="deleteTask(${index})">
+
+                            <i class="bi bi-trash"></i>
+
+                        </button>
+
+                    </div>`
+
+                document.getElementById("taskList")
+                    .appendChild(li)
+
+            })
+
+            updateCount()
+
+        }
+
+        /* ADD */
+
+        function addTask() {
+
+            let input =
+                document.getElementById("taskInput")
+                    .value
+
+            if (input == "")
+                return
+
+            tasks.push({
+
+                date: date,
+                task: input
+
+            })
+
+            localStorage.setItem(
+                "tasks",
+                JSON.stringify(tasks)
+            )
+
+            document.getElementById("taskInput")
+                .value = ""
+
+            loadTasks()
+
+        }
+
+        /* DELETE */
+
+        function deleteTask(index) {
+
+            tasks.splice(index, 1)
+
+            localStorage.setItem(
+                "tasks",
+                JSON.stringify(tasks)
+            )
+
+            loadTasks()
+
+        }
+
+        /* EDIT */
+
+        function editTask(index) {
+
+            let newTask =
+                prompt(
+                    "Edit your task",
+                    tasks[index].task
+                )
+
+            if (
+                newTask !== null &&
+                newTask.trim() !== ""
+            ) {
+
+                tasks[index].task =
+                    newTask
+
+                localStorage.setItem(
+                    "tasks",
+                    JSON.stringify(tasks)
+                )
+
+                loadTasks()
+
+            }
+
+        }
+
+        /* COUNT */
+
+        function updateCount() {
+
+            document.getElementById("taskCount")
+                .innerText =
+                "Total Tasks : "
+                + tasks.length
+
+        }
+
+        /* SUBMIT */
+
+        function submitTask() {
+
+            alert(
+                "Task Saved Successfully!"
+            )
+
+        }
+
+        /* CLOSE */
+
+        function closePage() {
+
+            window.location =
+                "index.html"
+
+        }
+
+        /* ENTER KEY */
+
+        document
+            .getElementById("taskInput")
+            .addEventListener(
+                "keypress",
+                function (e) {
+
+                    if (e.key === "Enter") {
+
+                        addTask()
+
+                    }
+
+                })
+
+        loadTasks()
+
+    </script>
+
+</body>
+
+</html>
